@@ -5,13 +5,13 @@ import 'package:fluuter/auth/login.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: "AIzaSyCbDqbhnfSO7JQDuANKt2-bDrLQ3v4k-dQ",
-      appId: '1:947020970604:android:fe726c875cc4be52f8f649',
-      messagingSenderId: '947020970604',
-      projectId: 'chitchat-8ac0c',
-      databaseURL: 'https://chitchat-8ac0c-default-rtdb.firebaseio.com/',
-    ),
+    // options: const FirebaseOptions(
+    //   apiKey: "AIzaSyCbDqbhnfSO7JQDuANKt2-bDrLQ3v4k-dQ",
+    //   appId: '1:947020970604:android:fe726c875cc4be52f8f649',
+    //   messagingSenderId: '947020970604',
+    //   projectId: 'chitchat-8ac0c',
+    //   databaseURL: 'https://chitchat-8ac0c-default-rtdb.firebaseio.com/',
+    // ),
   );
   runApp(MyApp());
 }
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const LogIn(),
+      home:const LogIn(),
       // FutureBuilder(
       //   future: _fbapp,
       //   builder: (context, snapshot) {

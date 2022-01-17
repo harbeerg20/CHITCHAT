@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:fluuter/pages/updateprofile.dart';
 
 // final id = user!.uid != 'YPrOHCWzoveNADSZ71FacoseBcs1'
 //     ? 'YPrOHCWzoveNADSZ71FacoseBcs1'
@@ -26,17 +25,27 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  var id;
+  var uid;
   final firebaseInstance = FirebaseFirestore.instance;
   final TextEditingController _chat = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      id = widget.id;
+      uid = getUser();
+      print(id);
+    });
+  }
   setData(id, uid, message) async {
     DatabaseReference ref = FirebaseDatabase.instance.ref("Chat/$uid/$id");
     await ref.push().set({
       "message": message,
       "Hour": DateTime.now().hour.toString(),
       "Minute": DateTime.now().minute.toString(),
-      "ID":uid,
+      "ID": uid,
     });
   }
 
@@ -46,7 +55,7 @@ class _ChatPageState extends State<ChatPage> {
       "message": message,
       "Hour": DateTime.now().hour.toString(),
       "Minute": DateTime.now().minute.toString(),
-      "ID":uid,
+      "ID": uid,
     });
   }
 
@@ -62,8 +71,9 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    final id = widget.id;
-    final uid = getUser();
+    
+    print(id);
+    print(uid);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -71,14 +81,13 @@ class _ChatPageState extends State<ChatPage> {
           centerTitle: true,
         ),
         body: Container(
-          color: Colors.transparent,
+          color: Colors.grey[200],
           child: Column(
             children: [
               Expanded(
                 child: FirebaseAnimatedList(
                   controller: _scrollController,
-                  query: FirebaseDatabase.instance
-                      .ref("Chat/${user!.uid}/$id"),
+                  query: FirebaseDatabase.instance.ref("Chat/${uid}/$id"),
                   itemBuilder: (context, snapshot, animation, index) {
                     try {
                       var data = snapshot.value as Map<dynamic, dynamic>;
@@ -87,24 +96,24 @@ class _ChatPageState extends State<ChatPage> {
                             ? MainAxisAlignment.end
                             : MainAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              alignment: index % 2 == 0
-                                  ? Alignment.bottomRight
-                                  : Alignment.centerLeft,
-                              decoration: BoxDecoration(
-                                color: Colors.blueAccent,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                data['message'],
-                                style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width *
-                                          0.04,
-                                  fontWeight: FontWeight.bold,
+                          // Text(snapshot.value.toString()),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width*0.6),
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(8.0,0,8,0),
+                              child: Card(
+                                color: Colors.blueGrey[100],
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    data['message'],
+                                    // snapshot.value.toString(),
+                                    style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width * 0.04,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -124,7 +133,7 @@ class _ChatPageState extends State<ChatPage> {
                 child: Row(
                   children: [
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.8,
+                      width: MediaQuery.of(context).size.width * 0.75,
                       child: TextFormField(
                         controller: _chat,
                         decoration: const InputDecoration(

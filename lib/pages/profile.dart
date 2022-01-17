@@ -23,10 +23,9 @@ class _ProfilePageState extends State<ProfilePage> {
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
-            title: const Center(
-              child: Text('Profile'),
-            ),
+            title: Text('Profile'),
             automaticallyImplyLeading: false,
+            centerTitle: true,
           ),
           body: FutureBuilder(
             future: firebaseInstance
@@ -68,7 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         pdata[0],
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: MediaQuery.of(context).size.width * 0.05,
+                          fontSize: MediaQuery.of(context).size.width * 0.065,
                         ),
                       ),
                     ),
@@ -76,87 +75,112 @@ class _ProfilePageState extends State<ProfilePage> {
                       height: MediaQuery.of(context).size.height * 0.04,
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
-                      child: Row(
-                        children: [
-                          RichText(
-                            textAlign: TextAlign.left,
-                            text: TextSpan(
-                              text: 'Gender\n',
-                              style: const TextStyle(color: Colors.grey),
+                      padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
                               children: [
-                                TextSpan(
-                                  text: pdata[1],
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.04,
-                                      color: Colors.black),
+                                RichText(
+                                  textAlign: TextAlign.left,
+                                  text: TextSpan(
+                                    text: 'Gender\n',
+                                    style: const TextStyle(color: Colors.grey),
+                                    children: [
+                                      TextSpan(
+                                        text: pdata[1],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.05,
+                                            color: Colors.black),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                    Divider(
-                      height: MediaQuery.of(context).size.height * 0.03,
-                    ),
+                    // Divider(
+                    //   height: MediaQuery.of(context).size.height * 0.03,
+                    // ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
-                      child: Row(
-                        children: [
-                          RichText(
-                            textAlign: TextAlign.left,
-                            text: TextSpan(
-                              text: 'Phone Number\n',
-                              style: const TextStyle(color: Colors.grey),
+                      padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
                               children: [
-                                TextSpan(
-                                  text: pdata[3],
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.04,
-                                      color: Colors.black),
+                                RichText(
+                                  textAlign: TextAlign.left,
+                                  text: TextSpan(
+                                    text: 'Phone Number\n',
+                                    style: const TextStyle(color: Colors.grey),
+                                    children: [
+                                      TextSpan(
+                                        text: pdata[3],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize:
+                                                MediaQuery.of(context).size.width *
+                                                    0.05,
+                                            color: Colors.black),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                    Divider(
-                      height: MediaQuery.of(context).size.height * 0.03,
-                    ),
+                    // Divider(
+                    //   height: MediaQuery.of(context).size.height * 0.03,
+                    // ),
                     // SizedBox(
                     //   height: MediaQuery.of(context).size.height * 0.03,
                     // ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
-                      child: Row(
-                        children: [
-                          RichText(
-                            textAlign: TextAlign.left,
-                            text: TextSpan(
-                              text: 'Email\n',
-                              style: const TextStyle(color: Colors.grey),
+                      padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
                               children: [
-                                TextSpan(
-                                  text: pdata[2],
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.04,
-                                      color: Colors.black),
+                                RichText(
+                                  textAlign: TextAlign.left,
+                                  text: TextSpan(
+                                    text: 'Email\n',
+                                    style: const TextStyle(color: Colors.grey),
+                                    children: [
+                                      TextSpan(
+                                        text: pdata[2],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize:
+                                                MediaQuery.of(context).size.width *
+                                                    0.05,
+                                            color: Colors.black),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                     Divider(
@@ -165,67 +189,73 @@ class _ProfilePageState extends State<ProfilePage> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.06,
                     ),
-                    Center(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * 0.04,
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        // color: Colors.blueAccent.shade400,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.blueAccent.shade400,
-                        ),
-                        child: MaterialButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ProfileUpdate(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            'Update Profile',
-                            style: TextStyle(
-                              color: Colors.white,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Center(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            width: MediaQuery.of(context).size.width * 0.45,
+                            // color: Colors.blueAccent.shade400,
+                            decoration: BoxDecoration(
+                              // borderRadius: BorderRadius.circular(15),
+                              color: Colors.blueAccent.shade400,
                             ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.04,
-                    ),
-                    Center(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * 0.04,
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        // color: Colors.blueAccent.shade400,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.blueAccent.shade400,
-                        ),
-                        child: MaterialButton(
-                          onPressed: () async {
-                            await FirebaseAuth.instance.signOut();
-                            final user = FirebaseAuth.instance.currentUser;
-                            print(user.toString());
-                            if (user == null) {
-                              Navigator.push(
+                            child: MaterialButton(
+                              onPressed: () {
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const LogIn()));
-                            } else {
-                              print('something went wrong');
-                            }
-                          },
-                          child: const Text(
-                            'Sign Out',
-                            style: TextStyle(
-                              color: Colors.white,
+                                    builder: (context) => const ProfileUpdate(),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                'Update Profile',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.04,
+                        ),
+                        Center(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            width: MediaQuery.of(context).size.width * 0.45,
+                            // color: Colors.blueAccent.shade400,
+                            // decoration: BoxDecoration(
+                            //   borderRadius: BorderRadius.circular(15),
+                            //   color: Colors.blueAccent.shade400,
+                            // ),
+                            child: MaterialButton(
+                              color: Colors.white,
+                              onPressed: () async {
+                                await FirebaseAuth.instance.signOut();
+                                final user = FirebaseAuth.instance.currentUser;
+                                print(user.toString());
+                                if (user == null) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => const LogIn()));
+                                } else {
+                                  print('something went wrong');
+                                }
+                              },
+                              child: const Text(
+                                'Sign Out',
+                                style: TextStyle(
+                                  color: Colors.redAccent,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 );
