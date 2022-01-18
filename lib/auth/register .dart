@@ -6,14 +6,16 @@ import 'package:fluuter/auth/login.dart';
 import 'package:fluuter/pages/welcomepage.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({Key? key}) : super(key: key);
+  SignUp({Key? key}) : super(key: key);
 
   @override
   _SignUpState createState() => _SignUpState();
 }
 
 class _SignUpState extends State<SignUp> {
-  String value='Male';
+  bool _isobscurePass = true;
+  bool _isobscureConfirmPass = true;
+  String value = 'Male';
   final _gender = ['Male', 'Female'];
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
@@ -56,66 +58,48 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.02,
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.blue.shade600,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: TextFormField(
-                      controller: _name,
-                      decoration: const InputDecoration(
-                        // icon: Icon(Icons.email),
-                        hintText: 'Name',
-                        border: OutlineInputBorder(),
-                      ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: TextFormField(
+                    controller: _name,
+                    decoration: InputDecoration(
+                      // icon: Icon(Icons.email),
+                      prefixIcon: Icon(Icons.person),
+                      hintText: 'Name',
+                      labelText: 'Name',
+                      border: OutlineInputBorder(),
                     ),
                   ),
                 ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.02,
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.blue.shade600,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: TextFormField(
-                      controller: _email,
-                      decoration: const InputDecoration(
-                        // icon: Icon(Icons.email),
-                        hintText: 'Username',
-                        border: OutlineInputBorder(),
-                      ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: TextFormField(
+                    controller: _email,
+                    decoration: InputDecoration(
+                      // icon: Icon(Icons.email),
+                      prefixIcon: Icon(Icons.email),
+                      hintText: 'Email',
+                      labelText: 'Email',
+                      border: OutlineInputBorder(),
                     ),
                   ),
                 ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.02,
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.blue.shade600,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: TextFormField(
-                      controller: _phone,
-                      decoration: const InputDecoration(
-                        // icon: Icon(Icons.email),
-                        hintText: 'PhoneNumber',
-                        border: OutlineInputBorder(),
-                      ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: TextFormField(
+                    controller: _phone,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.phone),
+                      // icon: Icon(Icons.email),
+                      hintText: 'PhoneNumber',
+                      labelText: 'PhoneNumber',
+                      border: OutlineInputBorder(),
                     ),
                   ),
                 ),
@@ -129,18 +113,17 @@ class _SignUpState extends State<SignUp> {
                       0,
                       MediaQuery.of(context).size.width * 0,
                       0),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                  padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(
-                          color: const Color.fromARGB(255, 113, 143, 203))),
+                          color: Color.fromARGB(255, 113, 143, 203))),
                   child: DropDown(
                     isExpanded: true,
                     showUnderline: false,
-                    hint: const Text('Gender'),
+                    hint: Text('Gender'),
                     initialValue: value,
-                    items: const ['Male', 'Female'],
+                    items: ['Male', 'Female'],
                     onChanged: (e) {
                       value = e.toString();
                     },
@@ -149,20 +132,25 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.02,
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.blue.shade600,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: TextFormField(
-                      controller: _password,
-                      decoration: const InputDecoration(
-                        hintText: 'Password',
-                        border: OutlineInputBorder(),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: TextFormField(
+                    controller: _password,
+                    obscureText: _isobscurePass,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.password),
+                      hintText: 'Password',
+                      labelText: 'Password',
+                      border: OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _isobscurePass = !_isobscurePass;
+                          });
+                        },
+                        icon: Icon(_isobscurePass
+                            ? Icons.visibility
+                            : Icons.visibility_off),
                       ),
                     ),
                   ),
@@ -170,20 +158,24 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.02,
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.blue.shade600,
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: TextFormField(
-                      decoration: const InputDecoration(
-                        // icon: Icon(Icons.email),
-                        hintText: 'Confirm Password',
-                        border: OutlineInputBorder(),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: TextFormField(
+                    obscureText: _isobscureConfirmPass,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.password_outlined),
+                      hintText: 'Confirm Password',
+                      labelText: 'Confirm Password',
+                      border: OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _isobscureConfirmPass = !_isobscureConfirmPass;
+                          });
+                        },
+                        icon: Icon(_isobscureConfirmPass
+                            ? Icons.visibility
+                            : Icons.visibility_off),
                       ),
                     ),
                   ),
@@ -196,20 +188,20 @@ class _SignUpState extends State<SignUp> {
                   // width: MediaQuery.of(context).size.width * 0.2,
                   child: MaterialButton(
                     onPressed: () async {
-                      User? user =
-                          await signUp(_name.text, _email.text, _password.text,value,_phone.text);
+                      User? user = await signUp(_name.text, _email.text,
+                          _password.text, value, _phone.text);
                       if (user != null) {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const WelcomePage(),
+                            builder: (context) => WelcomePage(),
                           ),
                         );
                       } else {
                         print('no');
                       }
                     },
-                    child: const Text("Sign Up"),
+                    child: Text("Sign Up"),
                     textColor: Colors.white,
                   ),
                   decoration: BoxDecoration(
@@ -220,13 +212,13 @@ class _SignUpState extends State<SignUp> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Already have account?"),
+                    Text("Already have account?"),
                     TextButton(
                         onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => const LogIn()));
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) => LogIn()));
                         },
-                        child: const Text('Sign In')),
+                        child: Text('Sign In')),
                   ],
                 )
               ],

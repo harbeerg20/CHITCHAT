@@ -21,10 +21,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'ChIt ChAt',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home:const LogIn(),
+      home: LogIn(),
       // FutureBuilder(
       //   future: _fbapp,
       //   builder: (context, snapshot) {

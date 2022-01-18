@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:fluuter/auth/authentication.dart';
-import 'package:fluuter/auth/register%20.dart';
-import 'package:fluuter/pages/forgotpassword.dart';
 import 'package:fluuter/pages/welcomepage.dart';
 
-class LogIn extends StatefulWidget {
-  LogIn({Key? key}) : super(key: key);
+class ChangePassword extends StatefulWidget {
+   ChangePassword({Key? key}) : super(key: key);
 
   @override
-  _LogInState createState() => _LogInState();
+  _ChangePasswordState createState() => _ChangePasswordState();
 }
 
-class _LogInState extends State<LogIn> {
-  final TextEditingController _email = TextEditingController();
-  final TextEditingController _password = TextEditingController();
-  bool _isobscure = true;
+class _ChangePasswordState extends State<ChangePassword> {
+  final TextEditingController _currentpasswod = TextEditingController();
+  final TextEditingController _newpassword = TextEditingController();
+  final TextEditingController _confirmpassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.blueAccent.shade400,
       body: Stack(
         children: [
           SizedBox(
@@ -44,7 +41,7 @@ class _LogInState extends State<LogIn> {
                       endIndent: MediaQuery.of(context).size.width * 0.1,
                     ),
                     Text(
-                      "Sign In",
+                      "Update Password",
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: MediaQuery.of(context).size.width * 0.065,
@@ -57,11 +54,11 @@ class _LogInState extends State<LogIn> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.8,
                       child: TextFormField(
-                        controller: _email,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.email_rounded),
-                          hintText: 'something@gmail.com',
-                          labelText: "Email",
+                        controller: _currentpasswod,
+                        decoration:  InputDecoration(
+                          prefixIcon: Icon(Icons.password_outlined),
+                          hintText: '******',
+                          labelText: "Current Password",
                           labelStyle: TextStyle(color: Colors.black),
                           border: OutlineInputBorder(),
                         ),
@@ -73,69 +70,49 @@ class _LogInState extends State<LogIn> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.8,
                       child: TextFormField(
-                        controller: _password,
-                        obscureText: _isobscure,
-                        decoration: InputDecoration(
+                        controller: _newpassword,
+                        obscureText: true,
+                        decoration:  InputDecoration(
                           prefixIcon: Icon(Icons.password_outlined),
-                          hintText: 'Password',
-                          labelText: "Password",
+                          hintText: '*******',
+                          labelText: "New Password",
                           labelStyle: TextStyle(color: Colors.black),
                           border: OutlineInputBorder(),
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _isobscure = !_isobscure;
-                              });
-                            },
-                            icon: Icon(_isobscure
-                                ? Icons.visibility
-                                : Icons.visibility_off),
-                          ),
                         ),
                       ),
                     ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.083,
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.03,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: TextFormField(
+                        controller: _confirmpassword,
+                        obscureText: true,
+                        decoration:  InputDecoration(
+                          prefixIcon: Icon(Icons.password_outlined),
+                          hintText: '*******',
+                          labelText: "Confirm Password",
+                          labelStyle: TextStyle(color: Colors.black),
+                          border: OutlineInputBorder(),
                         ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ForgotPassword(),
-                              ),
-                            );
-                          },
-                          child: Text('Forgot Password?'),
-                        ),
-                      ],
+                      ),
                     ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.027,
                     ),
                     Container(
-                      height: MediaQuery.of(context).size.height * 0.04,
-                      width: MediaQuery.of(context).size.width * 0.2,
                       child: MaterialButton(
                         onPressed: () async {
-                          print(_email.text);
-                          print(_password.text);
-                          bool shouldnavigate =
-                              await signIn(_email.text, _password.text);
-                          if (shouldnavigate) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => WelcomePage(),
-                              ),
-                            );
-                            _email.clear();
-                            _password.clear();
+                          if (_newpassword.text != _confirmpassword.text) {
+                            showCustomDialog(context,
+                                title: "New Passwords' doesn't match!");
+                          } else {
+                            var res = await changePassword(_currentpasswod.text,
+                                _newpassword.text, context);
                           }
                         },
-                        child: Text("Sign In"),
+                        child:  Text("Update"),
                         textColor: Colors.white,
                       ),
                       decoration: BoxDecoration(
@@ -146,17 +123,19 @@ class _LogInState extends State<LogIn> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Don't have account?"),
+                        Text('Go to'),
                         TextButton(
                             onPressed: () {
                               Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SignUp()));
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => WelcomePage(index: 1),
+                                ),
+                              );
                             },
-                            child: Text('Sign Up')),
+                            child: Text('Profile Page'))
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -166,4 +145,22 @@ class _LogInState extends State<LogIn> {
       ),
     );
   }
+}
+
+void showCustomDialog(
+  BuildContext context, {
+  required String title,
+}) {
+  showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          // title: Text(title.toString()),
+          content: Text(title.toString()),
+          actions: <Widget>[
+            MaterialButton(
+                child: Text('Close'), onPressed: () => Navigator.pop(context))
+          ],
+        );
+      });
 }

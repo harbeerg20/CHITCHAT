@@ -11,18 +11,23 @@ User? getUser() {
 }
 
 class WelcomePage extends StatefulWidget {
-  const WelcomePage({Key? key}) : super(key: key);
+  final index;
+   WelcomePage({Key? key,@required this.index}) : super(key: key);
 
   @override
   _WelcomePageState createState() => _WelcomePageState();
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  int index = 0;
-  
+  int index =0;
+  @override
+  void initState() {
+    super.initState();
+    index=widget.index!=null?widget.index:0;
+  }
   final screens = [
-    const StrangerPeople(),
-    const ProfilePage(),
+     StrangerPeople(),
+     ProfilePage(),
     
   ];
   @override
@@ -44,7 +49,7 @@ class _WelcomePageState extends State<WelcomePage> {
               index = e;
             });
           },
-          items: const [
+          items:  [
             // BottomNavigationBarItem(
             //   icon: Icon(Icons.chat_bubble_outline_outlined),
             //   label: 'Chat',

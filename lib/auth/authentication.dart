@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:flutter/material.dart';
 import '../model/user.dart';
+import '../model/simplify.dart';
 
 Future<bool> signIn(String email, String password) async {
   try {
@@ -38,7 +39,7 @@ Future<User?> signUp(
         .doc(user!.uid)
         .set(usser.toJson())
         .then((_) {
-      print('succes');
+      print('success');
     });
     // .doc(user!.uid)
     // .set(
@@ -60,4 +61,41 @@ Future<User?> signUp(
     // return false;
   }
   return user;
+}
+
+Future<String?> changePassword(String currentPassword, String newPassword,context) async {
+  var user =await FirebaseAuth.instance.currentUser;
+  user!.reload();
+  user = await FirebaseAuth.instance.currentUser;
+  final cred = EmailAuthProvider.credential(
+      email: user!.email.toString(), password: currentPassword);
+  user.reauthenticateWithCredential(cred).then((value) {
+    user!.updatePassword(newPassword).then((e) {
+      showCustomDialog(context, title: 'Success');
+      return 'Success';
+    }).catchError((onError){
+      showCustomDialog(context, title:onError..toString());
+      return 'onError.toString()';
+    });
+  }).catchError((onError){
+     showCustomDialog(context, title: "Current Password doesn't match");
+    return "Current Password doesn't match";
+  });
+}
+void showCustomDialog(
+  BuildContext context, {
+  required String title,
+}) {
+  showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          // title: Text(title.toString()),
+          content: Text(title.toString()),
+          actions: <Widget>[
+            MaterialButton(
+                child: Text('Close'), onPressed: () => Navigator.pop(context))
+          ],
+        );
+      });
 }

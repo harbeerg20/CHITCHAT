@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluuter/pages/changepass.dart';
 import 'package:fluuter/pages/profile.dart';
 import 'package:fluuter/pages/welcomepage.dart';
 import '../model/user.dart';
@@ -14,6 +15,7 @@ getUser() {
   user = FirebaseAuth.instance.currentUser;
   return user;
 }
+
 class ProfileUpdate extends StatefulWidget {
   // final User? user;
   const ProfileUpdate({Key? key}) : super(key: key);
@@ -23,12 +25,13 @@ class ProfileUpdate extends StatefulWidget {
 }
 
 class _ProfileUpdateState extends State<ProfileUpdate> {
-   var user;
+  var user;
   @override
   void initState() {
     super.initState();
     user = getUser();
   }
+
   List pdata = [];
   String valuee = '';
   final TextEditingController _email = TextEditingController();
@@ -37,7 +40,6 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
 
   @override
   Widget build(BuildContext context) {
-   
     // final userr = getData();
     return SafeArea(
       child: Scaffold(
@@ -111,7 +113,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                               controller: _name,
                               // initialValue: pdata[0],
                               decoration: const InputDecoration(
-                                // icon: Icon(Icons.email),
+                                prefixIcon: Icon(Icons.person),
                                 hintText: 'Name',
                                 border: OutlineInputBorder(),
                               ),
@@ -134,8 +136,8 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                               // initialValue: pdata[2],
                               controller: _email,
                               decoration: const InputDecoration(
-                                // icon: Icon(Icons.email),
-                                hintText: 'Username',
+                                prefixIcon: Icon(Icons.email_rounded),
+                                hintText: 'Email',
                                 border: OutlineInputBorder(),
                               ),
                             ),
@@ -157,7 +159,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                               // initialValue: pdata[3],
                               controller: _phone,
                               decoration: const InputDecoration(
-                                // icon: Icon(Icons.email),
+                                prefixIcon: Icon(Icons.phone),
                                 hintText: 'PhoneNumber',
                                 border: OutlineInputBorder(),
                               ),
@@ -174,12 +176,13 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                               0,
                               MediaQuery.of(context).size.width * 0,
                               0),
-                          padding:
-                              const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 4, horizontal: 16),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
                               border: Border.all(
-                                  color: const Color.fromARGB(255, 113, 143, 203))),
+                                  color: const Color.fromARGB(
+                                      255, 113, 143, 203))),
                           child: DropDown(
                             isExpanded: true,
                             showUnderline: false,
@@ -212,10 +215,12 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                                     .update(ussers);
                                 user!.updateEmail(_email.text);
                                 user!.reload();
-                                Navigator.push(
+                                Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const WelcomePage(),
+                                    builder: (context) => WelcomePage(
+                                      index: 1,
+                                    ),
                                   ),
                                 );
                               } catch (e) {
@@ -234,12 +239,19 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                           height: MediaQuery.of(context).size.height * 0.015,
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChangePassword(),
+                              ),
+                            );
+                          },
                           child: Text(
                             'Change Password',
                             style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.width*0.035
-                            ),
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.035),
                           ),
                         ),
                       ],
