@@ -5,14 +5,16 @@ import '../model/user.dart';
 import '../model/simplify.dart';
 
 Future<bool> signIn(String email, String password,BuildContext context) async {
-  // try {
+  try {
     await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password).catchError((onError){
-           showCustomDialog(context, title: onError.toString());
-        });
+        .signInWithEmailAndPassword(email: email, password: password);
+        
     // print(FirebaseAuth.instance.currentUser.toString());
     return true;
-  // }
+  }on FirebaseAuthException catch(e){
+    showCustomDialog(context, title: e.code);
+    return false;
+  }
   // catch (e) {
   //   showCustomDialog(context, title: e.toString());
   //   print(e);
@@ -26,6 +28,7 @@ Future<User?> signUp(
   String password,
   String gender,
   String phone,
+  BuildContext context,
 ) async {
   FirebaseAuth auth = FirebaseAuth.instance;
   User? user;
@@ -56,8 +59,10 @@ Future<User?> signUp(
   } on FirebaseAuthException catch (e) {
     if (e.code == 'weak-password') {
       print('The password is too weak');
+      showCustomDialog(context, title: e.code);
     } else if (e.code == 'email-already-in-use') {
       print('The account already exist for that email');
+      showCustomDialog(context, title: e.code);
     }
     // return false;
   } catch (e) {
@@ -76,6 +81,7 @@ Future<String?> changePassword(String currentPassword, String newPassword,contex
   user.reauthenticateWithCredential(cred).then((value) {
     user!.updatePassword(newPassword).then((e) {
       showCustomDialog(context, title: 'Success');
+      // Navigator.push(context, route)
       return 'Success';
     }).catchError((onError){
       showCustomDialog(context, title:onError..toString());

@@ -224,11 +224,11 @@ class _SignUpState extends State<SignUp> {
                 MaterialButton(
                   color: Colors.blueAccent.shade400,
                   onPressed: () async {
-                    if(_name.text.isEmpty||_email.text.isEmpty||_phone.text.isEmpty||_password.text.isEmpty||!_cpassword.text.isEmpty){
+                    if(_name.text.isEmpty||_email.text.isEmpty||_phone.text.isEmpty||_password.text.isEmpty||_cpassword.text.isEmpty){
                       showCustomDialog(context, title: 'All fields are required');
                     }else if(_password.text==_cpassword.text){
                       User? user = await signUp(_name.text, _email.text,
-                        _password.text, value, _phone.text);
+                        _password.text, value, _phone.text,context);
                     if (user != null) {
                       Navigator.pushReplacement(
                         context,
