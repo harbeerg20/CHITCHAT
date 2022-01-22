@@ -55,6 +55,12 @@ class _ChangePasswordState extends State<ChangePassword> {
                       width: MediaQuery.of(context).size.width * 0.8,
                       child: TextFormField(
                         controller: _currentpasswod,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value){
+                          if(_currentpasswod.text.isEmpty||_currentpasswod.text==null){
+                            return "Required";
+                          }
+                        },
                         decoration:  InputDecoration(
                           prefixIcon: Icon(Icons.password_outlined),
                           hintText: '******',
@@ -72,6 +78,13 @@ class _ChangePasswordState extends State<ChangePassword> {
                       child: TextFormField(
                         controller: _newpassword,
                         obscureText: true,
+                         autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (_newpassword.text.isEmpty ||
+                              _newpassword.text == null) {
+                            return "Required";
+                          }
+                        },
                         decoration:  InputDecoration(
                           prefixIcon: Icon(Icons.password_outlined),
                           hintText: '*******',
@@ -89,6 +102,12 @@ class _ChangePasswordState extends State<ChangePassword> {
                       child: TextFormField(
                         controller: _confirmpassword,
                         obscureText: true,
+                         autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (_newpassword.text !=_confirmpassword.text) {
+                            return "Passwords doesn't match";
+                          }
+                        },
                         decoration:  InputDecoration(
                           prefixIcon: Icon(Icons.password_outlined),
                           hintText: '*******',
@@ -104,13 +123,15 @@ class _ChangePasswordState extends State<ChangePassword> {
                     Container(
                       child: MaterialButton(
                         onPressed: () async {
-                          if (_newpassword.text != _confirmpassword.text) {
-                            showCustomDialog(context,
-                                title: "New Passwords' doesn't match!");
-                          } else {
+                          if(_currentpasswod.text.isEmpty||_newpassword.text.isEmpty||_currentpasswod.text.isEmpty){
+                            showCustomDialog(context, title: 'All fields are required');
+                          }
+                         else if (_newpassword.text == _confirmpassword.text) {
                             var res = await changePassword(_currentpasswod.text,
                                 _newpassword.text, context);
-                          }
+                            
+                          } 
+                         
                         },
                         child:  Text("Update"),
                         textColor: Colors.white,

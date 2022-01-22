@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluuter/pages/chat.dart';
+import "package:firebase_storage/firebase_storage.dart" as firebase_storage;
 
 class StrangerPeople extends StatefulWidget {
   const StrangerPeople({
@@ -15,7 +16,9 @@ class StrangerPeople extends StatefulWidget {
 class _StrangerPeopleState extends State<StrangerPeople> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _fb = FirebaseFirestore.instance;
-
+  firebase_storage.FirebaseStorage _storage =
+      firebase_storage.FirebaseStorage.instance;
+  String sendImage='';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +53,7 @@ class _StrangerPeopleState extends State<StrangerPeople> {
                         } else {
                           final data = document.data() as Map<dynamic, dynamic>;
                           return Padding(
-                            padding: const EdgeInsets.fromLTRB(10.0,1,10,1),
+                            padding: const EdgeInsets.fromLTRB(10.0, 1, 10, 1),
                             child: Card(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
@@ -59,16 +62,42 @@ class _StrangerPeopleState extends State<StrangerPeople> {
                                     MediaQuery.of(context).size.width * 0.03,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)),
-                                leading: Icon(
-                                  Icons.person,
-                                  size: MediaQuery.of(context).size.width * 0.1,
-                                  // color: Colors.,
+                                leading: CircleAvatar(
+                                 
+                                  child: FutureBuilder(
+                                    future: _storage
+                                        .ref(
+                                            'users/ProfilePicture/${document.id}')
+                                        .getDownloadURL(),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return Center(
+                                          child: Icon(
+                                            Icons.person,
+                                          ),
+                                        );
+                                      } else if (snapshot.hasData) {
+                                        sendImage=snapshot.data;
+                                        return CircleAvatar(
+                                          radius: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2,
+                                          backgroundImage:
+                                              NetworkImage(snapshot.data),
+                                        );
+                                      }
+                                      return CircularProgressIndicator();
+                                    },
+                                  ),
                                 ),
                                 title: Text(
-                                  '  ' + data["Name"],
+                                  ' ${data["Name"]}',
                                   style: TextStyle(
                                     fontSize:
-                                        MediaQuery.of(context).size.width * 0.05,
+                                        MediaQuery.of(context).size.width *
+                                            0.05,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -76,7 +105,8 @@ class _StrangerPeopleState extends State<StrangerPeople> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => ChatPage( id: document.id,name: data['Name']),
+                                      builder: (context) => ChatPage(
+                                          id: document.id, name: data['Name'], ),
                                       // id: document.id,name: data['Name'],
                                     ),
                                   );

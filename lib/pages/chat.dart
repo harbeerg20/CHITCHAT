@@ -1,18 +1,27 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import "package:firebase_storage/firebase_storage.dart" as firebase_storage;
 
 // final id = user!.uid != 'YPrOHCWzoveNADSZ71FacoseBcs1'
 //     ? 'YPrOHCWzoveNADSZ71FacoseBcs1'
 //     : 'pWzMqogzqkfjaDbLtdaLgXGeEVH3';
-getUser() {
-  var user = FirebaseAuth.instance.currentUser;
-  user!.reload();
-  user = FirebaseAuth.instance.currentUser;
-  return user!.uid;
-}
+// getUser() {
+//   var user = FirebaseAuth.instance.currentUser;
+//   // user.reload();
+//   if(user==null){
+//     user = FirebaseAuth.instance.currentUser;
+//     // return user!.uid;
+//   }else{
+//     return user.uid;
+//   }
+ 
+//   return user!.uid;
+// }
 
 class ChatPage extends StatefulWidget {
   final id;
@@ -29,16 +38,24 @@ class _ChatPageState extends State<ChatPage> {
   var uid;
   final firebaseInstance = FirebaseFirestore.instance;
   final TextEditingController _chat = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+
+  firebase_storage.FirebaseStorage _storage =
+      firebase_storage.FirebaseStorage.instance;
+   ScrollController _scrollController=ScrollController();
   @override
   void initState() {
     super.initState();
-    setState(() {
-      id = widget.id;
-      uid = getUser();
-      print(id);
-    });
+   setState(() {
+     id=widget.id;
+   });
   }
+
+ 
+  void _scroll() {
+    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 500), curve: Curves.ease);
+  }
+
   setData(id, uid, message) async {
     DatabaseReference ref = FirebaseDatabase.instance.ref("Chat/$uid/$id");
     await ref.push().set({
@@ -71,14 +88,42 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    
-    print(id);
-    print(uid);
+    final user = FirebaseAuth.instance.currentUser;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.name.toString()),
+          title: Row(
+            children: [
+              CircleAvatar(
+                child: FutureBuilder(
+                  future: _storage
+                      .ref('users/ProfilePicture/${id}')
+                      .getDownloadURL(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: Icon(
+                          Icons.person,
+                        ),
+                      );
+                    } else if (snapshot.hasData) {
+                      return CircleAvatar(
+                        radius: MediaQuery.of(context).size.width * 0.2,
+                        backgroundImage: NetworkImage(snapshot.data),
+                      );
+                    }
+                    return CircularProgressIndicator();
+                  },
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.05,
+              ),
+              Text(widget.name.toString()),
+            ],
+          ),
           centerTitle: true,
+          automaticallyImplyLeading: true,
         ),
         body: Container(
           color: Colors.grey[200],
@@ -87,36 +132,45 @@ class _ChatPageState extends State<ChatPage> {
               Expanded(
                 child: FirebaseAnimatedList(
                   controller: _scrollController,
-                  query: FirebaseDatabase.instance.ref("Chat/${uid}/$id"),
+                  query: FirebaseDatabase.instance.ref("Chat/${user!.uid}/$id"),
                   itemBuilder: (context, snapshot, animation, index) {
+                      //  _scroll();
                     try {
                       var data = snapshot.value as Map<dynamic, dynamic>;
-                      return Row(
-                        mainAxisAlignment: data['ID'] == uid
-                            ? MainAxisAlignment.end
-                            : MainAxisAlignment.start,
+                      return Column(
                         children: [
-                          // Text(snapshot.value.toString()),
-                          ConstrainedBox(
-                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width*0.6),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(8.0,0,8,0),
-                              child: Card(
-                                color: Colors.blueGrey[100],
+                          Row(
+                            mainAxisAlignment: data['ID'] == user.uid
+                                ? MainAxisAlignment.end
+                                : MainAxisAlignment.start,
+                            children: [
+                              ConstrainedBox(
+                                constraints: BoxConstraints(
+                                    maxWidth:
+                                        MediaQuery.of(context).size.width *
+                                            0.6),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    data['message'],
-                                    // snapshot.value.toString(),
-                                    style: TextStyle(
-                                      fontSize:
-                                          MediaQuery.of(context).size.width * 0.04,
-                                      fontWeight: FontWeight.bold,
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
+                                  child: Card(
+                                    color: Colors.blueGrey[100],
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        data['message'],
+                                        style: TextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.04,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
                         ],
                       );
@@ -137,7 +191,6 @@ class _ChatPageState extends State<ChatPage> {
                       child: TextFormField(
                         controller: _chat,
                         decoration: const InputDecoration(
-                          // icon: Icon(Icons.email),
                           hintText: 'Your Message',
                           labelText: "Chat",
                           labelStyle: TextStyle(color: Colors.black),
@@ -150,8 +203,8 @@ class _ChatPageState extends State<ChatPage> {
                         onPressed: () {
                           if (_chat.text.isEmpty) {
                           } else {
-                            setData(id, uid, _chat.text);
-                            setData1(id, uid, _chat.text);
+                            setData(id, user.uid, _chat.text);
+                            setData1(id, user.uid, _chat.text);
                             _chat.clear();
                           }
                         },

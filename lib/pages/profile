@@ -296,3 +296,34 @@ Column(
                     ),
                   ),
                 ]);
+
+
+                CircleAvatar(
+                            radius: MediaQuery.of(context).size.width * 0.2,
+                            backgroundImage:
+                                 null,
+                            child: Center(
+                              child: IconButton(
+                                iconSize:
+                                    MediaQuery.of(context).size.width * 0.15,
+                                icon: Icon(
+                                  Icons.camera_enhance,
+                                ),
+                                onPressed: () async {
+                                  XFile? image = await ImagePicker().pickImage(
+                                      source: ImageSource.gallery,
+                                      imageQuality: 50);
+                                  var file = File(image!.path);
+                                  Reference ref = _storage.ref().child(
+                                      'users/ProfilePicture/${user!.uid}');
+                                  UploadTask uploadTask = ref.putFile(file);
+                                  uploadTask.then((e){setState(() {
+                                    
+                                  });});
+                                  setState(() {
+                                    
+                                  });
+                                },
+                              ),
+                            ),
+                          ),

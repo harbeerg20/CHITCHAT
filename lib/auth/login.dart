@@ -113,35 +113,28 @@ class _LogInState extends State<LogIn> {
                       ],
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.027,
+                      height: MediaQuery.of(context).size.height * 0.02,
                     ),
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.04,
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      child: MaterialButton(
-                        onPressed: () async {
-                          print(_email.text);
-                          print(_password.text);
-                          bool shouldnavigate =
-                              await signIn(_email.text, _password.text);
-                          if (shouldnavigate) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => WelcomePage(),
-                              ),
-                            );
-                            _email.clear();
-                            _password.clear();
-                          }
-                        },
-                        child: Text("Sign In"),
-                        textColor: Colors.white,
-                      ),
-                      decoration: BoxDecoration(
-                          // shape:BoxShape.circle,
-                          color: Colors.blueAccent.shade400,
-                          borderRadius: BorderRadius.circular(5)),
+                    MaterialButton(
+                      color: Colors.blueAccent.shade400,
+                      onPressed: () async {
+                        print(_email.text);
+                        print(_password.text);
+                        bool shouldnavigate =
+                            await signIn(_email.text, _password.text, context);
+                        if (shouldnavigate) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WelcomePage(),
+                            ),
+                          );
+                          _email.clear();
+                          _password.clear();
+                        }
+                      },
+                      child: Text("Sign In"),
+                      textColor: Colors.white,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

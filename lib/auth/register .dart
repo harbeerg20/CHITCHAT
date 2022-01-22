@@ -22,7 +22,6 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _cpassword = TextEditingController();
   final TextEditingController _name = TextEditingController();
   final TextEditingController _phone = TextEditingController();
-  // TextEditingController _ggender = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +61,22 @@ class _SignUpState extends State<SignUp> {
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: TextFormField(
                     controller: _name,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (String? value){
+                      if(value!.isEmpty||_name.text==null){
+                        return 'Name is required';
+                      }
+                    },
+                    // onChanged: (String userInput){
+                    //   if (value.isEmpty || _name.text == null) {
+                    //     showCustomDialog(context, title: 'Name is required');
+                    //   }
+                    //   setState(() {
+                    //     debugPrint(userInput);
+                    //   });
+
+                    //},
                     decoration: InputDecoration(
-                      // icon: Icon(Icons.email),
                       prefixIcon: Icon(Icons.person),
                       hintText: 'Name',
                       labelText: 'Name',
@@ -78,6 +91,12 @@ class _SignUpState extends State<SignUp> {
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: TextFormField(
                     controller: _email,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (String? value) {
+                      if (value!.isEmpty || _email.text == null) {
+                        return 'Email is required';
+                      }
+                    },
                     decoration: InputDecoration(
                       // icon: Icon(Icons.email),
                       prefixIcon: Icon(Icons.email),
@@ -94,6 +113,12 @@ class _SignUpState extends State<SignUp> {
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: TextFormField(
                     controller: _phone,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (String? value) {
+                      if (value!.isEmpty || _phone.text == null) {
+                        return 'PhoneNumber is required';
+                      }
+                    },
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.phone),
                       // icon: Icon(Icons.email),
@@ -137,6 +162,12 @@ class _SignUpState extends State<SignUp> {
                   child: TextFormField(
                     controller: _password,
                     obscureText: _isobscurePass,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (String? value) {
+                      if (value!.isEmpty || _password.text == null) {
+                        return 'Password is required';
+                      }
+                    },
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.password),
                       hintText: 'Password',
@@ -161,7 +192,14 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: TextFormField(
+                    controller: _cpassword,
                     obscureText: _isobscureConfirmPass,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (String? value) {
+                      if ( _cpassword.text !=_password.text) {
+                        return "Passwords doesn't match";
+                      }
+                    },
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.password_outlined),
                       hintText: 'Confirm Password',
@@ -183,31 +221,43 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.03,
                 ),
-                Container(
-                  // height: MediaQuery.of(context).size.height * 0.04,
-                  // width: MediaQuery.of(context).size.width * 0.2,
-                  child: MaterialButton(
-                    onPressed: () async {
+                MaterialButton(
+                  color: Colors.blueAccent.shade400,
+                  onPressed: () async {
+                    if(_name.text.isEmpty||_email.text.isEmpty||_phone.text.isEmpty||_password.text.isEmpty||!_cpassword.text.isEmpty){
+                      showCustomDialog(context, title: 'All fields are required');
+                    }else if(_password.text==_cpassword.text){
                       User? user = await signUp(_name.text, _email.text,
-                          _password.text, value, _phone.text);
-                      if (user != null) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => WelcomePage(),
-                          ),
-                        );
-                      } else {
-                        print('no');
-                      }
-                    },
-                    child: Text("Sign Up"),
-                    textColor: Colors.white,
-                  ),
-                  decoration: BoxDecoration(
-                      // shape:BoxShape.circle,
-                      color: Colors.blueAccent.shade400,
-                      borderRadius: BorderRadius.circular(5)),
+                        _password.text, value, _phone.text);
+                    if (user != null) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WelcomePage(),
+                        ),
+                      );
+                    } else {
+                      showCustomDialog(context, title: 'Something went wrong\n try again');
+                    }
+                    }
+                    // if(_password.text!=_cpassword.text){
+                    //     showCustomDialog(context, title: "Passwords doesn't match");
+                    // }
+                    // User? user = await signUp(_name.text, _email.text,
+                    //     _password.text, value, _phone.text);
+                    // if (user != null) {
+                    //   Navigator.pushReplacement(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => WelcomePage(),
+                    //     ),
+                    //   );
+                    // } else {
+                    //   print('no');
+                    // }
+                  },
+                  child: Text("Sign Up"),
+                  textColor: Colors.white,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -228,4 +278,23 @@ class _SignUpState extends State<SignUp> {
       ]),
     );
   }
+}
+
+
+void showCustomDialog(
+  BuildContext context, {
+  required String title,
+}) {
+  showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          // title: Text(title.toString()),
+          content: Text(title.toString()),
+          actions: <Widget>[
+            MaterialButton(
+                child: Text('Close'), onPressed: () => Navigator.pop(context))
+          ],
+        );
+      });
 }

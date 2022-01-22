@@ -4,16 +4,20 @@ import 'package:flutter/material.dart';
 import '../model/user.dart';
 import '../model/simplify.dart';
 
-Future<bool> signIn(String email, String password) async {
-  try {
+Future<bool> signIn(String email, String password,BuildContext context) async {
+  // try {
     await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password);
+        .signInWithEmailAndPassword(email: email, password: password).catchError((onError){
+           showCustomDialog(context, title: onError.toString());
+        });
     // print(FirebaseAuth.instance.currentUser.toString());
     return true;
-  } catch (e) {
-    print(e);
-    return false;
-  }
+  // }
+  // catch (e) {
+  //   showCustomDialog(context, title: e.toString());
+  //   print(e);
+  //   return false;
+  // }
 }
 
 Future<User?> signUp(

@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluuter/pages/changepass.dart';
 import 'package:fluuter/pages/profile.dart';
 import 'package:fluuter/pages/welcomepage.dart';
+import 'package:image_picker/image_picker.dart';
 import '../model/user.dart';
 import 'package:flutter_dropdown/flutter_dropdown.dart';
+import "package:firebase_storage/firebase_storage.dart" as firebase_storage;
 
 final firebaseInstance = FirebaseFirestore.instance;
 // final User? user = FirebaseAuth.instance.currentUser;
@@ -25,11 +29,15 @@ class ProfileUpdate extends StatefulWidget {
 }
 
 class _ProfileUpdateState extends State<ProfileUpdate> {
+  firebase_storage.FirebaseStorage _storage =
+      firebase_storage.FirebaseStorage.instance;
+  String imageUrl = '';
   var user;
   @override
   void initState() {
     super.initState();
     user = getUser();
+    
   }
 
   List pdata = [];
@@ -37,10 +45,14 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _name = TextEditingController();
   final TextEditingController _phone = TextEditingController();
+  getUrl() async {
+    imageUrl = await firebase_storage.FirebaseStorage.instance
+        .ref('users/ProfilePicture/${user!.uid}')
+        .getDownloadURL();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // final userr = getData();
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -77,17 +89,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                     child: Column(
                       children: [
                         SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.15,
-                        ),
-                        Icon(
-                          Icons.account_box_rounded,
-                          size: MediaQuery.of(context).size.width * 0.3,
-                        ),
-                        Divider(
-                          color: Colors.black,
-                          thickness: 3,
-                          indent: MediaQuery.of(context).size.width * 0.1,
-                          endIndent: MediaQuery.of(context).size.width * 0.1,
+                          height: MediaQuery.of(context).size.height * 0.1,
                         ),
                         Text(
                           "Update Profile",
@@ -95,6 +97,54 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                             color: Colors.black,
                             fontSize: MediaQuery.of(context).size.width * 0.065,
                             fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.01,
+                        ),
+                        Divider(
+                          color: Colors.black,
+                          thickness: 3,
+                          indent: MediaQuery.of(context).size.width * 0.1,
+                          endIndent: MediaQuery.of(context).size.width * 0.1,
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.01,
+                        ),
+                        CircleAvatar(
+                          radius: MediaQuery.of(context).size.width * 0.2,
+                          backgroundImage: imageUrl != '' ? NetworkImage(imageUrl) : null,
+                          child: Center(
+                            child: IconButton(
+                              iconSize:
+                                  MediaQuery.of(context).size.width * 0.15,
+                              icon: Icon(
+                                Icons.camera_enhance,
+                              ),
+                              onPressed: () async {
+                                XFile? image = await ImagePicker().pickImage(
+                                    source: ImageSource.gallery,
+                                    imageQuality: 50);
+                                var file = File(image!.path);
+                                firebase_storage.Reference ref = _storage
+                                    .ref()
+                                    .child('users/ProfilePicture/${user!.uid}');
+                                firebase_storage.UploadTask uploadTask =
+                                    ref.putFile(file);
+                                uploadTask.then(
+                                  (e) {
+                                    setState(
+                                      () {ref.getDownloadURL().then((value) {
+                                        imageUrl=value;
+                                        setState(() {
+                                        });
+                                      });}
+                                    );
+                                  },
+                                );
+                                setState(() {});
+                              },
+                            ),
                           ),
                         ),
                         SizedBox(
@@ -197,43 +247,36 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.03,
                         ),
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.04,
-                          width: MediaQuery.of(context).size.width * 0.2,
-                          child: MaterialButton(
-                            onPressed: () async {
-                              Usser usser = Usser(
-                                  name: _name.text,
-                                  gender: valuee,
-                                  phone: _phone.text,
-                                  gmail: _email.text);
-                              final ussers = usser.toJson();
-                              try {
-                                firebaseInstance
-                                    .collection('users')
-                                    .doc(user!.uid)
-                                    .update(ussers);
-                                user!.updateEmail(_email.text);
-                                user!.reload();
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => WelcomePage(
-                                      index: 1,
-                                    ),
+                        MaterialButton(
+                          color: Colors.blueAccent,
+                          onPressed: () async {
+                            Usser usser = Usser(
+                                name: _name.text,
+                                gender: valuee,
+                                phone: _phone.text,
+                                gmail: _email.text);
+                            final ussers = usser.toJson();
+                            try {
+                              firebaseInstance
+                                  .collection('users')
+                                  .doc(user!.uid)
+                                  .update(ussers);
+                              user!.updateEmail(_email.text);
+                              user!.reload();
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => WelcomePage(
+                                    index: 1,
                                   ),
-                                );
-                              } catch (e) {
-                                print(e.toString());
-                              }
-                            },
-                            child: const Text("Update"),
-                            textColor: Colors.white,
-                          ),
-                          decoration: BoxDecoration(
-                              // shape:BoxShape.circle,
-                              color: Colors.blueAccent.shade400,
-                              borderRadius: BorderRadius.circular(5)),
+                                ),
+                              );
+                            } catch (e) {
+                              print(e.toString());
+                            }
+                          },
+                          child: const Text("Update"),
+                          textColor: Colors.white,
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.015,
